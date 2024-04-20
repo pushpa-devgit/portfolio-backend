@@ -10,11 +10,16 @@ import contactRouter from "./routes/contact.routes.js";
 // Import custom middlewares
 import { sendErrorResponse } from "./middlewares/general.middlewares.js";
 
+let isDBConnected = false;
+
 // ENV setup & DB Connection
 dotenv.config();
 mongoose
   .connect(process.env.DB_CONN_STR)
-  .then((res) => console.log("Connected to the database."))
+  .then((res) => {
+    console.log("Connected to the database.");
+    isDBConnected = true;
+  })
   .catch((err) => console.log("Couldn't connect to the Database.", err));
 
 // Create server & use necessary middlewares
@@ -22,6 +27,14 @@ const app = express();
 app.use(cors({ origin: process.env.FRONTEND_ENDPOINT }));
 app.use(express.json());
 app.use(express.static("static"));
+
+// path to validate application is working
+app.get("/", (req, res) =>
+  res.json({
+    success: true,
+    data: { appRunning: true, dbConnected: isDBConnected },
+  })
+);
 
 // use api routes
 app.use("/api/users/", userRouter);
