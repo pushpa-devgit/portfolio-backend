@@ -15,7 +15,7 @@ let isDBConnected = false;
 // ENV setup & DB Connection
 dotenv.config();
 mongoose
-  .connect(process.env.DB_CONN_STR)
+  .connect(process.env.MONGODB_URI)
   .then((res) => {
     console.log("Connected to the database.");
     isDBConnected = true;
